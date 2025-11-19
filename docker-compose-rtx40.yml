@@ -1,14 +1,14 @@
 version: '3.8'
 
 services:
-  deepseek-ocr:
+  deepseek-ocr-rtx40:
     build:
       context: .
-      dockerfile: Dockerfile
-    image: deepseek-ocr:latest
-    container_name: deepseek-ocr-service
+      dockerfile: Dockerfile.rtx40
+    image: deepseek-ocr:rtx40
+    container_name: deepseek-ocr-service-rtx40
     
-    # GPU 支持配置
+    # GPU 支持
     deploy:
       resources:
         reservations:
@@ -17,22 +17,19 @@ services:
               count: 1
               capabilities: [gpu]
     
+    # 端口映射
+    ports:
+      - "8200:8200"
+    
     # 环境变量
     environment:
       - MODEL_NAME=deepseek-ai/DeepSeek-OCR
       - OUTPUT_DIR=/app/outputs
-      - OUTPUT_FILE_RETENTION=86400  # 输出文件保留时间 24 小时
       - IDLE_TIMEOUT=3600  # 1 小时空闲超时
       - LAZY_LOAD=true     # 启用按需加载
       - HF_HOME=/root/.cache/huggingface  # Hugging Face 缓存路径
       - MAX_CONCURRENT_REQUESTS=1  # 最大并发请求数（与 PaddleOCR/FunASR/HeyGen 共享 GPU）
       - MAX_FILE_SIZE=20971520     # 最大文件大小 20MB
-      - API_BASE_URL=http://localhost:8200  # API 基础 URL（如使用内网穿透，修改为穿透后的地址）
-      - CUDA_VISIBLE_DEVICES=0
-    
-    # 端口映射
-    ports:
-      - "8200:8200"
     
     # 数据卷挂载
     volumes:
@@ -50,11 +47,4 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
-    
-    # 日志配置
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
 
