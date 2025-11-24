@@ -2,7 +2,11 @@
 # 基于 NVIDIA CUDA 12.1 镜像，支持 RTX 40/30 系列 GPU (sm_89/sm_86)
 # 使用稳定版 PyTorch，构建速度更快
 
+# 方案 A: 使用官方镜像（需要配置镜像加速器）
 FROM nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
+
+# 方案 B: 如果方案 A 失败，取消下面的注释，使用阿里云镜像
+# FROM registry.cn-hangzhou.aliyuncs.com/google_containers/cuda:12.1.1-cudnn8-devel-ubuntu22.04
 
 # 设置环境变量
 ENV DEBIAN_FRONTEND=noninteractive \
